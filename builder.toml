@@ -9,3 +9,4 @@
   id = "mskj.cmbc.com.cn.java8"
   build-image = "mskj/java8-maven:latest"
   run-image = "mskj/java8-base:latest"
+  run-image-mirrors = ["harbor.container-service.mstech.com.cn","harbor.etcd-test.mstech.com.cn"]
