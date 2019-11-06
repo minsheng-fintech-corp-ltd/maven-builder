@@ -1,0 +1,62 @@
+#!/usr/bin/env sh
+set -eo pipefail
+
+# Set the layersdir variable to be the first argument from the build lifecycle
+layersdir=$1
+maven_target=${TARGET:=package}
+maven_profile=${PROFILE:=default}
+echo "---> Java maven buildpack" 
+echo "---> Print environment info"
+env
+echo "---> Print maven info"
+mvn -v
+
+if [[ -d  $layersdir/cache ]] ; then
+    echo "---> Reusing cache"
+else
+    echo "---> Creating cache dir"
+    mkdir -p $layersdir/cache/
+    echo -e "cache = true\nbuild = true\nlaunch = false" > "$layersdir/cache.toml"
+fi
+
+echo "setup default maven config"
+cat >$layersdir/cache/settings.xml <<EOF
+<settings xmlns="http://maven.apache.org/SETTINGS/1.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0
+                      https://maven.apache.org/xsd/settings-1.0.0.xsd">
+<localRepository>$layersdir/cache/maven/</localRepository>
+
+<mirrors>
+    <mirror>
+      <id>mskj</id>  
+      <name>mskj maven</name>  
+      <url>http://nexus.mstech.com.cn:8081/repository/mskj-maven/</url>  
+      <mirrorOf>central</mirrorOf> 
+    </mirror>
+  </mirrors>
+</settings>
+EOF
+cat $layersdir/cache/settings.xml
+
+echo "building app jars"
+mkdir -p $layersdir/apps
+mvn -s $layersdir/cache/settings.xml -P $maven_profile $maven_target -ff -B
+
+cp target/*.jar $layersdir/apps/
+
+echo -e 'launch = true' > $layersdir/apps.toml
+
+if [[ -f entrypoint.sh  ]]; then
+  echo "entrypoint.sh is found"
+  cp entrypoint.sh $layersdir/apps/
+  chmod a+x $layersdir/apps/entrypoint.sh
+  # Set default start command
+  echo "processes = [{ type = \"web\", command = \"cd $layersdir/apps/; ./entrypoint.sh\"}]" > "$layersdir/launch.toml"
+else
+  echo "entrypoint.sh is not found"
+  echo "processes = [{ type = \"web\", command = \"java -jar $layersdir/apps/*.jar\"}]" > "$layersdir/launch.toml"
+fi
+
+echo "refresh cache"
+echo -e "cache = true\nbuild = true\nlaunch = false" > "$layersdir/cache.toml"

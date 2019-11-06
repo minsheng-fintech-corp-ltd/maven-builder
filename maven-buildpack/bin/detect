@@ -1,0 +1,7 @@
+#!/usr/bin/env sh
+set -eo pipefail
+
+if [[ ! -f pom.xml  ]]; then
+   echo "pom.xml is not found"
+   exit 100
+fi

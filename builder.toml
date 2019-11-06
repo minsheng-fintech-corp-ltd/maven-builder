@@ -1,0 +1,11 @@
+[[buildpacks]]
+  uri = "maven-buildpack"
+  id = "mskj.cmbc.com.cn.buildpacks.java8.maven"
+[[order]]
+  [[order.group]]
+    id = "mskj.cmbc.com.cn.buildpacks.java8.maven"
+    version = "0.0.1"
+[stack]
+  id = "mskj.cmbc.com.cn.java8"
+  build-image = "mskj/java8-maven:latest"
+  run-image = "mskj/java8-base:latest"
