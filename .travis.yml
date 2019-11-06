@@ -8,6 +8,7 @@ script:
   - tar xvf pack-v0.5.0-linux.tgz
   - rm pack-v0.5.0-linux.tgz
   - ./pack create-builder mskj/maven-builder:latest -b builder.toml
+  - rm pack
 deploy:
   provider: script
   script: bash deploy.sh
