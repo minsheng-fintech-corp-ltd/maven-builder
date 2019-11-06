@@ -3,10 +3,11 @@ language: ruby
 services:
   - docker
 
-before_install:
-  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+script:
   - wget https://github.com/buildpack/pack/releases/download/v0.5.0/pack-v0.5.0-linux.tgz
   - tar xvf pack-v0.5.0-linux.tgz
   - rm pack-v0.5.0-linux.tgz
   - ./pack create-builder mskj/maven-builder:latest -b builder.toml
-  - docker push mskj/maven-builder:latest
+deploy:
+  provider: script
+  script: bash deploy.sh
