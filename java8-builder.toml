@@ -1,12 +1,12 @@
 [[buildpacks]]
   uri = "maven-buildpack"
-  id = "mskj.cmbc.com.cn.buildpacks.java8.maven"
+  id = "mskj.cmbc.com.cn.buildpacks.java.maven"
 [[order]]
   [[order.group]]
-    id = "mskj.cmbc.com.cn.buildpacks.java8.maven"
+    id = "mskj.cmbc.com.cn.buildpacks.java.maven"
     version = "0.0.1"
 [stack]
   id = "mskj.cmbc.com.cn.java8"
   build-image = "mskj/java8-maven:latest"
   run-image = "mskj/java8-base:latest"
-  run-image-mirrors = ["harbor.container-service.mstech.com.cn","harbor.etcd-test.mstech.com.cn"]
+  run-image-mirrors = ["harbor-ver.mstech.com.cn","harbor-dev.mstech.com.cn"]

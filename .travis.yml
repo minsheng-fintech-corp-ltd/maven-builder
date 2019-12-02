@@ -11,7 +11,8 @@ script:
   - wget https://github.com/buildpack/pack/releases/download/v0.5.0/pack-v0.5.0-linux.tgz
   - tar xvf pack-v0.5.0-linux.tgz
   - rm pack-v0.5.0-linux.tgz
-  - ./pack create-builder ${REPO}:${COMMIT} -b builder.toml
+  - ./pack create-builder ${REPO}:java8-${COMMIT} -b java8-builder.toml
+  - ./pack create-builder ${REPO}:java11-${COMMIT} -b java11-builder.toml
   - rm pack
 deploy:
   provider: script

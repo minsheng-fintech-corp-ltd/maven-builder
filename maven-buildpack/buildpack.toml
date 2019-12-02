@@ -1,8 +1,11 @@
 api = "0.2"
 [buildpack]
-id = "mskj.cmbc.com.cn.buildpacks.java8.maven"
+id = "mskj.cmbc.com.cn.buildpacks.java.maven"
 version = "0.0.1"
 name = "Java maven buildpack"
 
 [[stacks]]
 id = "mskj.cmbc.com.cn.java8"
+
+[[stacks]]
+id = "mskj.cmbc.com.cn.java11"

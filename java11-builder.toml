@@ -1,0 +1,12 @@
+[[buildpacks]]
+  uri = "maven-buildpack"
+  id = "mskj.cmbc.com.cn.buildpacks.java.maven"
+[[order]]
+  [[order.group]]
+    id = "mskj.cmbc.com.cn.buildpacks.java.maven"
+    version = "0.0.1"
+[stack]
+  id = "mskj.cmbc.com.cn.java11"
+  build-image = "mskj/java11-maven:latest"
+  run-image = "mskj/java11-base:latest"
+  run-image-mirrors = ["harbor-ver.mstech.com.cn","harbor-dev.mstech.com.cn"]
