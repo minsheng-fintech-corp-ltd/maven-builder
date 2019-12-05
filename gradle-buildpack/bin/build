@@ -22,7 +22,7 @@ fi
 echo "building app jars"
 mkdir -p $layersdir/apps
 
-gradle --foreground -g $layersdir/cache --project-cache-dir $layersdir/cache -i  --no-daemon -Dspring.profiles.active=${PROFILE} ${TARGET} 
+gradle -g $layersdir/cache --project-cache-dir $layersdir/cache -i  --no-daemon -Dspring.profiles.active=${PROFILE} ${TARGET} 
 
 cp build/libs/*.jar $layersdir/apps/
 
