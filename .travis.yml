@@ -5,9 +5,14 @@ services:
 env:
   global:
     - COMMIT=${TRAVIS_COMMIT::8}
-    - REPO=mskj/buildpack-maven-builder
+    - REPO=mskj/buildpack-java-builder
 
 script:
+  - docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"
+  - docker build -t mskj/java8-builder-base:latest -f java8-builder-base.dockerfile . 
+  - docker build -t mskj/java11-builder-base:latest -f java11-builder-base.dockerfile .
+  - docker push mskj/java8-builder-base:latest
+  - docker push mskj/java11-builder-base:latest
   - wget https://github.com/buildpack/pack/releases/download/v0.5.0/pack-v0.5.0-linux.tgz
   - tar xvf pack-v0.5.0-linux.tgz
   - rm pack-v0.5.0-linux.tgz

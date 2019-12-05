@@ -1,0 +1,43 @@
+#!/usr/bin/env sh
+set -eo pipefail
+
+# Set the layersdir variable to be the first argument from the build lifecycle
+layersdir=$1
+gradle_task=${TARGET:=assemble} 
+gradle_profile=${PROFILE:=default}
+echo "---> Java gradle buildpack" 
+echo "---> Print environment info"
+env
+echo "---> Print gradle info"
+gradle -version
+
+if [[ -d  $layersdir/cache ]] ; then
+    echo "---> Reusing cache"
+else
+    echo "---> Creating cache dir"
+    mkdir -p $layersdir/cache/
+    echo -e "cache = true\nbuild = true\nlaunch = false" > "$layersdir/cache.toml"
+fi
+
+echo "building app jars"
+mkdir -p $layersdir/apps
+
+gradle --foreground -g $layersdir/cache --project-cache-dir $layersdir/cache -i  --no-daemon -Dspring.profiles.active=${PROFILE} ${TARGET} 
+
+cp build/libs/*.jar $layersdir/apps/
+
+echo -e 'launch = true' > $layersdir/apps.toml
+
+if [[ -f entrypoint.sh  ]]; then
+  echo "entrypoint.sh is found"
+  cp entrypoint.sh $layersdir/apps/
+  chmod a+x $layersdir/apps/entrypoint.sh
+  # Set default start command
+  echo "processes = [{ type = \"web\", command = \"cd $layersdir/apps/; ./entrypoint.sh\"}]" > "$layersdir/launch.toml"
+else
+  echo "entrypoint.sh is not found"
+  echo "processes = [{ type = \"web\", command = \"java -jar $layersdir/apps/*.jar\"}]" > "$layersdir/launch.toml"
+fi
+
+echo "refresh cache"
+echo -e "cache = true\nbuild = true\nlaunch = false" > "$layersdir/cache.toml"

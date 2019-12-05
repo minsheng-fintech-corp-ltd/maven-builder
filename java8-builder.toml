@@ -1,6 +1,13 @@
 [[buildpacks]]
   uri = "maven-buildpack"
   id = "mskj.cmbc.com.cn.buildpacks.java.maven"
+[[buildpacks]]
+  uri = "gradle-buildpack"
+  id = "mskj.cmbc.com.cn.buildpacks.java.gradle"
+[[order]]
+  [[order.group]]
+    id = "mskj.cmbc.com.cn.buildpacks.java.gradle"
+    version = "0.0.1"
 [[order]]
   [[order.group]]
     id = "mskj.cmbc.com.cn.buildpacks.java.maven"

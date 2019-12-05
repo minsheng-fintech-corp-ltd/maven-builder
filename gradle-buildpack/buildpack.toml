@@ -1,0 +1,11 @@
+api = "0.2"
+[buildpack]
+id = "mskj.cmbc.com.cn.buildpacks.java.gradle"
+version = "0.0.1"
+name = "Java gradle buildpack"
+
+[[stacks]]
+id = "mskj.cmbc.com.cn.java8"
+
+[[stacks]]
+id = "mskj.cmbc.com.cn.java11"

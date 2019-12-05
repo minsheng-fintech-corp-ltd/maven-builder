@@ -1,0 +1,7 @@
+#!/usr/bin/env sh
+set -eo pipefail
+
+if [[ ! -f build.gradle  ]]; then
+   echo "settings.gradle is not found"
+   exit 100
+fi
