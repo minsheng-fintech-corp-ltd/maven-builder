@@ -18,7 +18,8 @@ RUN set -o pipefail\
             && source /root/.sdkman/bin/sdkman-init.sh \
             && echo 'sdkman_auto_answer=true' > $SDKMAN_DIR/etc/config \
             && sdk version \
-            && sdk install maven gradle\
+            && sdk install maven \
+            && sdk install gradle \
             && sdk flush broadcast\
             && sdk flush archives\
             && sdk flush temp" \
