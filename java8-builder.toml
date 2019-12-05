@@ -14,5 +14,5 @@
     version = "0.0.1"
 [stack]
   id = "mskj.cmbc.com.cn.java8"
-  build-image = "mskj/java8-maven:latest"
+  build-image = "mskj/java8-builder-base:latest"
   run-image = "mskj/java8-base:latest"
