@@ -9,7 +9,7 @@ ENV CNB_GROUP_ID=${cnb_gid}
 ENV PATH=$PATH:/root/.sdkman/candidates/maven/current/bin/
 ENV PATH=$PATH:/root/.sdkman/candidates/gradle/current/bin/
 RUN set -o pipefail\
-    && apk add --no-cache -u zip curl \
+    && apk add --no-cache -u zip curl docker-cli \
     && addgroup cnb --gid ${cnb_gid} \
     && adduser  cnb -u ${cnb_uid} -D -S -s /bin/bash -G cnb \
     && curl -s "https://get.sdkman.io" | bash \
