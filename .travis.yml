@@ -13,9 +13,10 @@ script:
   - docker build -t mskj/java11-builder-base:latest -f java11-builder-base.dockerfile .
   - docker push mskj/java8-builder-base:latest
   - docker push mskj/java11-builder-base:latest
-  - wget https://github.com/buildpack/pack/releases/download/v0.5.0/pack-v0.5.0-linux.tgz
-  - tar xvf pack-v0.5.0-linux.tgz
-  - rm pack-v0.5.0-linux.tgz
+  - sudo apt-get install -y curl
+  - curl -L $(curl -s https://api.github.com/repos/buildpacks/pack/releases/latest |grep 'browser_' |grep linux |cut -d\" -f4) --output pack.tgz
+  - tar xvf pack.tgz
+  - rm pack.tgz
   - ./pack create-builder ${REPO}:java8-${COMMIT} -b java8-builder.toml
   - ./pack create-builder ${REPO}:java11-${COMMIT} -b java11-builder.toml
   - rm pack
