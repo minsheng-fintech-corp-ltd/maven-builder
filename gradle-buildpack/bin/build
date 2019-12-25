@@ -11,18 +11,21 @@ env
 echo "---> Print gradle info"
 gradle -version
 
-if [[ -d  $layersdir/cache ]] ; then
+if [[ -d  $layersdir/cache.toml ]] ; then
     echo "---> Reusing cache"
 else
     echo "---> Creating cache dir"
     mkdir -p $layersdir/cache/
-    echo -e "cache = true\nbuild = true\nlaunch = false" > "$layersdir/cache.toml"
+    echo -e "cache = true" > "$layersdir/cache.toml"
 fi
+mkdir -p $layersdir/cache/userhome
+ln -s $layersdir/cache/userhome $HOME/.gradle
+mkdir -p $layersdir/cache/projectcache
 
 echo "building app jars"
 mkdir -p $layersdir/apps
 
-gradle -g $layersdir/cache --project-cache-dir $layersdir/cache -i  --no-daemon -Dspring.profiles.active=${PROFILE} ${TARGET} 
+gradle --project-cache-dir $layersdir/cache/projectcache -i  --no-daemon -Dspring.profiles.active=${PROFILE} clean ${TARGET} 
 
 cp build/libs/*.jar $layersdir/apps/
 
@@ -36,8 +39,15 @@ if [[ -f entrypoint.sh  ]]; then
   echo "processes = [{ type = \"web\", command = \"cd $layersdir/apps/; ./entrypoint.sh\"}]" > "$layersdir/launch.toml"
 else
   echo "entrypoint.sh is not found"
-  echo "processes = [{ type = \"web\", command = \"java -jar $layersdir/apps/*.jar\"}]" > "$layersdir/launch.toml"
+  target_dir=$layersdir/apps/
+  for jar_file in $(find "$target_dir" -maxdepth 1 -name "*.jar" -type f); do
+    cat >> "${layers_dir}/launch.toml" <<EOL
+  [[processes]]
+  type = "web"
+  command = "java -jar ${jar_file}"
+  EOL
+    break;
+  done
 fi
 
-echo "refresh cache"
-echo -e "cache = true\nbuild = true\nlaunch = false" > "$layersdir/cache.toml"
+gradle --project-cache-dir $layersdir/cache/projectcache -i  --no-daemon -Dspring.profiles.active=${PROFILE} clean

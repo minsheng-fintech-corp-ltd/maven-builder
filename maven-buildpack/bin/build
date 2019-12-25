@@ -11,12 +11,12 @@ env
 echo "---> Print maven info"
 mvn -v
 
-if [[ -d  $layersdir/cache ]] ; then
+if [[ -d  $layersdir/cache.toml ]] ; then
     echo "---> Reusing cache"
 else
     echo "---> Creating cache dir"
     mkdir -p $layersdir/cache/
-    echo -e "cache = true\nbuild = true\nlaunch = false" > "$layersdir/cache.toml"
+    echo -e "cache = true" > "$layersdir/cache.toml"
 fi
 
 echo "setup default maven config"
@@ -25,8 +25,6 @@ cat >$layersdir/cache/settings.xml <<EOF
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0
                       https://maven.apache.org/xsd/settings-1.0.0.xsd">
-<localRepository>$layersdir/cache/maven/</localRepository>
-
 <mirrors>
     <mirror>
       <id>mskj</id>  
@@ -38,10 +36,11 @@ cat >$layersdir/cache/settings.xml <<EOF
 </settings>
 EOF
 cat $layersdir/cache/settings.xml
+ln -s $layersdir/cache/ $HOME/.m2
 
 echo "building app jars"
 mkdir -p $layersdir/apps
-mvn -s $layersdir/cache/settings.xml -P $maven_profile $maven_target -ff -B
+mvn -P $maven_profile clean $maven_target -ff -B
 
 cp target/*.jar $layersdir/apps/
 
@@ -55,8 +54,15 @@ if [[ -f entrypoint.sh  ]]; then
   echo "processes = [{ type = \"web\", command = \"cd $layersdir/apps/; ./entrypoint.sh\"}]" > "$layersdir/launch.toml"
 else
   echo "entrypoint.sh is not found"
-  echo "processes = [{ type = \"web\", command = \"java -jar $layersdir/apps/*.jar\"}]" > "$layersdir/launch.toml"
+  target_dir=$layersdir/apps/
+  for jar_file in $(find "$target_dir" -maxdepth 1 -name "*.jar" -type f); do
+    cat >> "${layers_dir}/launch.toml" <<EOL
+  [[processes]]
+  type = "web"
+  command = "java -jar ${jar_file}"
+  EOL
+    break;
+  done
 fi
 
-echo "refresh cache"
-echo -e "cache = true\nbuild = true\nlaunch = false" > "$layersdir/cache.toml"
+mvn -P $maven_profile clean -ff -B
