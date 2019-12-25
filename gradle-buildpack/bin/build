@@ -42,10 +42,10 @@ else
   target_dir=$layersdir/apps/
   for jar_file in $(find "$target_dir" -maxdepth 1 -name "*.jar" -type f); do
     cat >> "${layers_dir}/launch.toml" <<EOL
-  [[processes]]
-  type = "web"
-  command = "java -jar ${jar_file}"
-  EOL
+[[processes]]
+type = "web"
+command = "java -jar ${jar_file}"
+EOL
     break;
   done
 fi
