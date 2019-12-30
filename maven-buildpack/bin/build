@@ -51,12 +51,12 @@ if [[ -f entrypoint.sh  ]]; then
   cp entrypoint.sh $layersdir/apps/
   chmod a+x $layersdir/apps/entrypoint.sh
   # Set default start command
-  echo "processes = [{ type = \"web\", command = \"cd $layersdir/apps/; ./entrypoint.sh\"}]" > "$layersdir/launch.toml"
+  echo "processes = [{ type = \"web\", command = \"cd $layersdir/apps/; ./entrypoint.sh\"}]" > $layersdir/launch.toml
 else
   echo "entrypoint.sh is not found"
   target_dir=$layersdir/apps/
   for jar_file in $(find "$target_dir" -maxdepth 1 -name "*.jar" -type f); do
-    cat >> "${layers_dir}/launch.toml" <<EOL
+    cat >> $layersdir/launch.toml <<EOL
 [[processes]]
 type = "web"
 command = "java -jar ${jar_file}"
