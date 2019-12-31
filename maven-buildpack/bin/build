@@ -55,7 +55,7 @@ if [[ -f entrypoint.sh  ]]; then
 else
   echo "entrypoint.sh is not found"
   target_dir=$layersdir/apps/
-  for jar_file in $(find "$target_dir" -maxdepth 1 -name "*.jar" -type f); do
+  for jar_file in $(find "$target_dir" -maxdepth 2 -name "*.jar" -type f); do
     cat > $layersdir/launch.toml <<EOL
 [[processes]]
 type = "web"
