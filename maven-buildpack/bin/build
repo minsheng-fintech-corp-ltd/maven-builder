@@ -5,6 +5,7 @@ set -eo pipefail
 layersdir=$1
 maven_target=${TARGET:=package}
 maven_profile=${PROFILE:=default}
+sub_dir=${SUBDIR:=.}
 echo "---> Java maven buildpack" 
 echo "---> Print environment info"
 env
@@ -39,6 +40,7 @@ cat $layersdir/cache/settings.xml
 ln -s $layersdir/cache/ $HOME/.m2
 
 echo "building app jars"
+cd $sub_dir
 mkdir -p $layersdir/apps
 mvn -P $maven_profile clean $maven_target -ff -B
 
