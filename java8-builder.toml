@@ -16,3 +16,5 @@
   id = "mskj.cmbc.com.cn.java8"
   build-image = "mskj/java8-builder-base:latest"
   run-image = "mskj/java8-base:latest"
+[lifecycle]
+  version="0.5.0"
