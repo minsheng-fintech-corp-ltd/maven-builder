@@ -17,4 +17,4 @@
   build-image = "mskj/java11-builder-base:latest"
   run-image = "mskj/java11-base:latest"
 [lifecycle]
-  version="0.5.0"
+  version="0.6.1"
