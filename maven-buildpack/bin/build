@@ -27,7 +27,7 @@ cat >$layersdir/cache/settings.xml <<EOF
   xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0
                       https://maven.apache.org/xsd/settings-1.0.0.xsd">
 
-<localRepository>/root/.m2/repository</localRepository>
+<localRepository>$layersdir/cache</localRepository>
 <mirrors>
     <mirror>
       <id>mskj</id>  
@@ -39,12 +39,11 @@ cat >$layersdir/cache/settings.xml <<EOF
 </settings>
 EOF
 cat $layersdir/cache/settings.xml
-ln -s /root/.m2 $HOME/.m2
 
 echo "building app jars"
 cd $sub_dir
 mkdir -p $layersdir/apps
-mvn -P $maven_profile clean $maven_target -ff -B
+mvn -P $maven_profile clean $maven_target -ff -B --settings $layersdir/cache/settings.xml
 
 cp target/*.jar $layersdir/apps/
 
@@ -69,4 +68,4 @@ EOL
   done
 fi
 
-mvn -P $maven_profile clean -ff -B
+mvn -P $maven_profile clean -ff -B --settings $layersdir/cache/settings.xml
