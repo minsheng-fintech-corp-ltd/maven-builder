@@ -6,7 +6,9 @@ env:
   global:
     - COMMIT=${TRAVIS_COMMIT::8}
     - REPO=mskj/buildpack-java-builder
-
+  jobs:
+    - BUILDPACK_LIFECYCLE=0.5.0
+    - BUILDPACK_LIFECYCLE=0.6.1
 script:
   - docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"
   - docker build -t mskj/java8-builder-base:latest -f java8-builder-base.dockerfile . 
@@ -17,8 +19,10 @@ script:
   - curl -L $(curl -s https://api.github.com/repos/buildpacks/pack/releases/latest |grep 'browser_' |grep linux |cut -d\" -f4) --output pack.tgz
   - tar xvf pack.tgz
   - rm pack.tgz
-  - ./pack create-builder ${REPO}:java8-${COMMIT} -b java8-builder.toml
-  - ./pack create-builder ${REPO}:java11-${COMMIT} -b java11-builder.toml
+  - sed -i -- "s/BUILDPACK_LIFECYCLE/${BUILDPACK_LIFECYCLE}/g" java8-builder.toml
+  - sed -i -- "s/BUILDPACK_LIFECYCLE/${BUILDPACK_LIFECYCLE}/g" java11-builder.toml
+  - ./pack create-builder ${REPO}:java8-${BUILDPACK_LIFECYCLE}-${COMMIT} -b java8-builder.toml
+  - ./pack create-builder ${REPO}:java11-${BUILDPACK_LIFECYCLE}-${COMMIT} -b java11-builder.toml
   - rm pack
 deploy:
   provider: script
