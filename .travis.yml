@@ -13,8 +13,8 @@ script:
   - docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"
   - docker build -t mskj/java8-builder-base:latest -f java8-builder-base.dockerfile . 
   - docker build -t mskj/java11-builder-base:latest -f java11-builder-base.dockerfile .
-  - docker push mskj/java8-builder-base:latest
   - docker push mskj/java11-builder-base:latest
+  - docker push mskj/java8-builder-base:latest
   - sudo apt-get install -y curl
   - curl -L $(curl -s https://api.github.com/repos/buildpacks/pack/releases/latest |grep 'browser_' |grep linux |cut -d\" -f4) --output pack.tgz
   - tar xvf pack.tgz
@@ -24,6 +24,12 @@ script:
   - ./pack create-builder ${REPO}:java8-${BUILDPACK_LIFECYCLE}-${COMMIT} -b java8-builder.toml
   - ./pack create-builder ${REPO}:java11-${BUILDPACK_LIFECYCLE}-${COMMIT} -b java11-builder.toml
   - rm pack
+  - docker push $REPO:java8-${BUILDPACK_LIFECYCLE}-$COMMIT
+  - docker tag $REPO:java8-${BUILDPACK_LIFECYCLE}-$COMMIT $REPO:java8-${BUILDPACK_LIFECYCLE}-latest
+  - docker push $REPO:java8-${BUILDPACK_LIFECYCLE}-latest
+  - docker push $REPO:java11-${BUILDPACK_LIFECYCLE}-$COMMIT
+  - docker tag $REPO:java11-${BUILDPACK_LIFECYCLE}-$COMMIT $REPO:java11-${BUILDPACK_LIFECYCLE}-latest
+  - docker push $REPO:java11-${BUILDPACK_LIFECYCLE}-latest
 deploy:
   provider: script
   script: bash deploy.sh
